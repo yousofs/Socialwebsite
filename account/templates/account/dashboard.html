@@ -3,6 +3,9 @@
 {% block title %}{{ user.username }} Profile {% endblock %}
 
 {% block content %}
+    {% if self_dash %}
+        <a href="{% url 'posts:add_post' request.user.id %}">Add post</a>
+    {% endif %}
     <h4 class="text-center">{{ user.username|capfirst }}</h4>
     <p class="text-center">{{ user.profile.bio }}</p>
     <br><br>
