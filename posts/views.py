@@ -24,7 +24,7 @@ def post_detail(request, year, month, day, slug):
             new_comment.save()
             messages.success(request, 'Your comment submitted successfully', 'success')
     else:
-        form = AddPostForm()
+        form = AddCommentForm()
     return render(request, 'posts/post-detail.html', {'post': post, 'comments': comments, 'form': form})
 
 
