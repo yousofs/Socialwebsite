@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <form action="" method="POST" novalidate>
+        {% csrf_token %}
+
+        {{ form.username.errors }}
+        <label for="{{ form.username.id_for_label }}">Username:</label>
+        {{ form.username }}<br>
+
+        {{ form.password.errors }}
+        <label for="{{ form.password.id_for_label }}">Password:</label>
+        {{ form.password }}<br>
+        <input type="submit" value="Login" class="btn btn-primary">
+    </form>
+{% endblock %}

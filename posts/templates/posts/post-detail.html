@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% endblock %}
+
+{% block content %}
+    {% if request.user.is_authenticated and request.user.id == post.user.id %}
+        <a href="{% url 'posts:post_delete' post.user.id post.id %}">Delete Post!</a>
+        <a href="{% url 'posts:post_edit' post.user.id post.id %}">Edit Post!</a>
+    {% endif %}
+    <p>{{ post.user }} | {{ post.created|date }}</p>
+    <p>{{ post.body }}</p>
+    <hr>
+    {% with total=comments.count %}
+        <p>{{ total }} Comment{{ total|pluralize }}</p>
+    {% endwith %}<br>
+
+    {% if request.user.is_authenticated %}
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit" class="btn btn-primary">
+        </form>
+    {% else %}
+        <p>Only Logged in users can send Comments!</p>
+    {% endif %}<br>
+
+    {% for comment in comments %}
+        <div class="card bg-dark text-white">
+            <p class="card-header">{{ comment.user }}</p>
+            <p class="card-body">{{ comment.body }}</p>
+        </div><br>
+    {% empty %}
+        <p>There is no comment!</p>
+    {% endfor %}
+{% endblock %}
