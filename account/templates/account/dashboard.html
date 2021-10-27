@@ -5,6 +5,7 @@
 {% block content %}
     {% if self_dash %}
         <a href="{% url 'posts:add_post' request.user.id %}">Add post</a>
+        <a href="{% url 'account:edit_profile' request.user.id %}">Edit Profile</a>
     {% endif %}
     <h4 class="text-center">{{ user.username|capfirst }}</h4>
     <p class="text-center">{{ user.profile.bio }}</p>

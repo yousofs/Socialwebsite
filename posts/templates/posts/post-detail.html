@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
+    {{ post.user }} | {{ post.body|slice:'10' }}
 {% endblock %}
 
 {% block content %}
@@ -16,7 +17,7 @@
     {% endwith %}<br>
 
     {% if request.user.is_authenticated %}
-        <form action="" method="post">
+        <form action="" method="post" novalidate class="col-md-6">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Submit" class="btn btn-primary">
@@ -29,6 +30,20 @@
         <div class="card bg-dark text-white">
             <p class="card-header">{{ comment.user }}</p>
             <p class="card-body">{{ comment.body }}</p>
+            {% if request.user.is_authenticated %}
+            <div class="card-body">
+                <form action="{% url 'posts:add_reply' post.id comment.id %}" method="post">
+                    {% csrf_token %}
+                    {{ reply.as_p }}
+                    <input type="submit" value="Send!">
+                </form>
+            </div>
+            {% else %}
+                <p>You have to login to send reply!</p>
+            {% endif %}
+            {% for reply in comment.rcomment.all %}
+                <p class="bg-primary text-white p-3 m-5">{{ reply.user }} <br>{{ reply.body }}</p>
+            {% endfor %}
         </div><br>
     {% empty %}
         <p>There is no comment!</p>

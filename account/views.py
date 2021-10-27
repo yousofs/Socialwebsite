@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserLoginForm, UserRegistrationForm
+from .forms import UserLoginForm, UserRegistrationForm, EditProfileForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -61,3 +61,27 @@ def user_dashboard(request, user_id):
         'posts': posts,
         'self_dash': self_dash
     })
+
+
+@login_required()
+def edit_profile(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST, instance=user.profile)
+        if form.is_valid():
+            form.save()
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data['first_name']
+            user.last_name = form.cleaned_data['last_name']
+            user.username = form.cleaned_data['username']
+            user.save()
+            messages.success(request, 'Your profile edited successfully', 'success')
+            redirect('account:dashboard', user_id)
+    else:
+        form = EditProfileForm(instance=user.profile, initial={
+            'email': request.user.email,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'username': request.user.username,
+        })
+    return render(request, 'account/edit_profile.html', {'form': form})
