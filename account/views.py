@@ -1,10 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import UserLoginForm, UserRegistrationForm, EditProfileForm
+from .forms import UserLoginForm, UserRegistrationForm, EditProfileForm, PhoneLoginForm, VerifyCodeForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from posts.models import Post
 from django.contrib.auth.decorators import login_required
+from random import randint
+from kavenegar import *
+
+from .models import Profile
+from django import forms
 
 
 def user_login(request):
@@ -85,3 +90,38 @@ def edit_profile(request, user_id):
             'username': request.user.username,
         })
     return render(request, 'account/edit_profile.html', {'form': form})
+
+
+def phone_login(request):
+    if request.method == 'POST':
+        form = PhoneLoginForm(request.POST)
+        if form.is_valid():
+            global phone, rand_num
+            phone = f"0{form.cleaned_data['phone']}"
+            rand_num = randint(100000, 999999)
+            api = KavenegarAPI(
+                '34645374355779676E474B77545847784F454A4B4F4B4E645069446332354F415A7066384F7570504D37673D')
+            params = {'sender': '', 'receptor': phone, 'message': rand_num}
+            api.sms_send(params)
+            return redirect('account:verify')
+
+    else:
+        form = PhoneLoginForm()
+    return render(request, 'account/phone_login.html', {'form': form})
+
+
+def verify(request):
+    if request.method == 'POST':
+        form = VerifyCodeForm(request.POST)
+        if form.is_valid():
+            if rand_num == form.cleaned_data['code']:
+                profile = get_object_or_404(Profile, phone=phone)
+                user = get_object_or_404(User, profile__id=profile.id)
+                login(request, user)
+                messages.success(request, 'You logged in successfully', 'success')
+                return redirect('posts:all_posts')
+            else:
+                messages.error(request, 'Your code is wrong!', 'warning')
+    else:
+        form = VerifyCodeForm()
+    return render(request, 'account/verify.html', {'form': form})
