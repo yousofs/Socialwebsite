@@ -27,9 +27,9 @@ class UserRegistrationForm(forms.Form):
 
 class EditProfileForm(forms.ModelForm):
     username = forms.CharField()
-    first_name = forms.CharField()
-    last_name = forms.CharField()
-    email = forms.EmailField()
+    first_name = forms.CharField(required=False)
+    last_name = forms.CharField(required=False)
+    email = forms.EmailField(required=False)
 
     class Meta:
         model = Profile

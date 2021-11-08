@@ -32,10 +32,10 @@
             <p class="card-body">{{ comment.body }}</p>
             {% if request.user.is_authenticated %}
             <div class="card-body">
-                <form action="{% url 'posts:add_reply' post.id comment.id %}" method="post">
+                <form action="{% url 'posts:add_reply' post.id comment.id %}" method="post" class="col-md-6">
                     {% csrf_token %}
                     {{ reply.as_p }}
-                    <input type="submit" value="Send!">
+                    <input type="submit" value="Send!" class="btn btn-primary">
                 </form>
             </div>
             {% else %}

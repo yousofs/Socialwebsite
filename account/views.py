@@ -81,7 +81,7 @@ def edit_profile(request, user_id):
             user.username = form.cleaned_data['username']
             user.save()
             messages.success(request, 'Your profile edited successfully', 'success')
-            redirect('account:dashboard', user_id)
+            return redirect('account:dashboard', user_id)
     else:
         form = EditProfileForm(instance=user.profile, initial={
             'email': request.user.email,
